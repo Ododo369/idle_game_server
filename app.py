@@ -51,7 +51,7 @@ def create_users_table_if_not_exists():
     try:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY PRIMARY KEY,
+                id SERIAL PRIMARY KEY,
                 username VARCHAR(255) UNIQUE NOT NULL,
                 password_hash VARCHAR(255) NOT NULL,
                 last_logout_time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
