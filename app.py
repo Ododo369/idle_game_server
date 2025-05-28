@@ -3,7 +3,6 @@ from flask import Flask, request, jsonify
 from datetime import datetime, timezone, timedelta
 import hashlib
 import json
-import bcrypt
 import random
 import psycopg2 # 用於連接PostgreSQL資料庫
 from psycopg2 import extras # 用於字典遊標
