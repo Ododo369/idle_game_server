@@ -347,7 +347,7 @@ def add_actions_to_queue():
 
     # 1. 檢查序列是否已滿
     if len(game_data.get('scheduled_actions', [])) >= max_queue_size:
-        return jsonify({"message": "行動序列已滿，無法加入新的行動。"}), 500
+        return jsonify({"message": "行動序列已滿，無法加入新的行動。"}), 450
         
     # 定義新行動的開始時間和結束時間
     # 如果序列是空的，新行動立刻開始
@@ -388,8 +388,6 @@ def add_actions_to_queue():
 
         return jsonify({
             "message": response_message,
-            "user_id": user_id,
-            "username": username,
             "added_count": quantity,
             "action_name": action_name, # 返回請求的行動名稱
             "total_in_queue": len(game_data['scheduled_actions']), # 返回序列總長度
