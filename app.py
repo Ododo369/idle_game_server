@@ -121,7 +121,7 @@ def get_area_data_from_db(name):
         print(f"獲取區域數據失敗: {e}")
         return None
     finally:
-    close_db_connection(cursor, conn)
+        close_db_connection(cursor, conn)
 
 
 # --- 核心邏輯：計算離線收益、處理排程動作、更新遊戲數據 ---
