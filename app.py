@@ -408,7 +408,7 @@ def add_actions_to_queue():
         return jsonify({
             "message": response_message,
             "added_count": added_count,
-            "action_type": action_type, # 返回請求的行動類型
+            "action_name": action_name, # 返回請求的行動名稱
             "total_in_queue": len(game_data['scheduled_actions']), # 返回序列總長度
             "current_executing_action": current_executing_action, # 返回當前執行中的行動資訊
             "game_data": game_data # 返回最新的完整遊戲數據
