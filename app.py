@@ -373,7 +373,7 @@ def add_actions_to_queue():
         **specific_params # 添加行動特有參數
     }
     game_data['scheduled_actions'].append(new_action_entry)
-    messages.append(f"成功將 (quantity)次 {action_name} 加入序列。")
+    messages.append(f"成功將 {action_name} 加入序列。")
 
     # 保存更新後的遊戲數據
     success = save_user_data_to_db(username, user_data['password_hash'], user_data['last_logout_time'], game_data)
