@@ -388,6 +388,8 @@ def add_actions_to_queue():
 
         return jsonify({
             "message": response_message,
+            "user_id": user_id,
+            "username": username,
             "added_count": quantity,
             "action_name": action_name, # 返回請求的行動名稱
             "total_in_queue": len(game_data['scheduled_actions']), # 返回序列總長度
