@@ -340,58 +340,40 @@ def add_actions_to_queue():
     game_data = user_data['game_data']
 
     max_queue_size = 3 # 假設行動序列最大長度
-    added_count = 0
     messages = []
     area_data = get_area_data_from_db(action_name)
 
     # 遍歷並嘗試添加指定數量的行動
-    for i in range(quantity):
-        # 1. 檢查序列是否已滿
-        if len(game_data.get('scheduled_actions', [])) >= max_queue_size:
-            messages.append(f"行動序列已滿，無法加入新的行動。")
-            break # 序列已滿，停止添加
 
-        # 2. 檢查材料是否充足 (對於每一次新增的行動)
-        can_afford = True
-        required_costs = area_data.get('cost', {})
-        for cost_resource, cost_amount in required_costs.items():
-            if game_data['resources'].get(cost_resource, 0) < cost_amount:
-                messages.append(f"材料不足以添加第 {i+1} 次 {action_type} 行動 ({cost_resource} 缺少)。")
-                can_afford = False
-                break
+    # 1. 檢查序列是否已滿
+    if len(game_data.get('scheduled_actions', [])) >= max_queue_size:
+        messages.append(f"行動序列已滿，無法加入新的行動。")
+        break # 序列已滿，停止添加
         
-        if not can_afford:
-            break # 材料不足，停止添加
-
-        # 3. 扣除材料並添加行動到序列
-        for cost_resource, cost_amount in required_costs.items():
-            game_data['resources'][cost_resource] -= cost_amount
+    # 定義新行動的開始時間和結束時間
+    # 如果序列是空的，新行動立刻開始
+    # 否則，新行動從前一個行動結束的時間開始
+    last_action_end_time_timestamp = int(datetime.now(timezone.utc).timestamp()) # 預設為當前時間
+    if game_data.get('scheduled_actions'):
+        last_action_end_time_timestamp = game_data['scheduled_actions'][-1].get('end_time', last_action_end_time_timestamp)
         
-        # 定義新行動的開始時間和結束時間
-        # 如果序列是空的，新行動立刻開始
-        # 否則，新行動從前一個行動結束的時間開始
-        last_action_end_time_timestamp = int(datetime.now(timezone.utc).timestamp()) # 預設為當前時間
-        if game_data.get('scheduled_actions'):
-            last_action_end_time_timestamp = game_data['scheduled_actions'][-1].get('end_time', last_action_end_time_timestamp)
+    action_start_time = datetime.fromtimestamp(last_action_end_time_timestamp, tz=timezone.utc)
         
-        action_start_time = datetime.fromtimestamp(last_action_end_time_timestamp, tz=timezone.utc)
+    # 計算實際行動持續時間和預期產量
+    actual_duration_seconds = area_data.get('time', 60) * quantity            
+    action_end_time = action_start_time + timedelta(seconds=actual_duration_seconds)
         
-        # 計算實際行動持續時間和預期產量
-        actual_duration_seconds = area_data.get('time', 60)            
-        action_end_time = action_start_time + timedelta(seconds=actual_duration_seconds)
-        
-        new_action_entry = {
-            "action_id": str(uuid.uuid4()), # 給每個行動一個唯一ID，方便客戶端追踪
-            "name": action_name,
-            "start_time": int(action_start_time.timestamp()),
-            "end_time": int(action_end_time.timestamp()),
-            "duration": actual_duration_seconds, # 實際花費時間
-            "status": "pending", # 可以是 pending, executing, completed
-            **specific_params # 添加行動特有參數
-        }
-        game_data['scheduled_actions'].append(new_action_entry)
-        added_count += 1
-        messages.append(f"成功將 {action_name} (第 {i+1} 次) 加入序列。")
+    new_action_entry = {
+        "action_id": str(uuid.uuid4()), # 給每個行動一個唯一ID，方便客戶端追踪
+        "name": action_name,
+        "start_time": int(action_start_time.timestamp()),
+        "end_time": int(action_end_time.timestamp()),
+        "duration": actual_duration_seconds, # 實際花費時間
+        "status": "pending", # 可以是 pending, executing, completed
+        **specific_params # 添加行動特有參數
+    }
+    game_data['scheduled_actions'].append(new_action_entry)
+    messages.append(f"成功將 (quantity)次 {action_name} 加入序列。")
 
     # 保存更新後的遊戲數據
     success = save_user_data_to_db(username, user_data['password_hash'], user_data['last_logout_time'], game_data)
