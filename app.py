@@ -4,6 +4,7 @@ from datetime import datetime, timezone, timedelta
 import hashlib
 import json
 import random
+import uuid
 import psycopg2 # 用於連接PostgreSQL資料庫
 from psycopg2 import extras # 用於字典遊標
 
