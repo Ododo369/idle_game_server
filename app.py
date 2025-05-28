@@ -347,8 +347,8 @@ def add_actions_to_queue():
 
     # 1. 檢查序列是否已滿
     if len(game_data.get('scheduled_actions', [])) >= max_queue_size:
+        print("ok")
         messages.append(f"行動序列已滿，無法加入新的行動。")
-        break # 序列已滿，停止添加
         
     # 定義新行動的開始時間和結束時間
     # 如果序列是空的，新行動立刻開始
