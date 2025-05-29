@@ -365,6 +365,7 @@ def add_actions_to_queue():
     new_action_entry = {
         "action_id": str(uuid.uuid4()), # 給每個行動一個唯一ID，方便客戶端追踪
         "name": action_name,
+        "quantity": quantity,
         "start_time": int(action_start_time.timestamp()),
         "end_time": int(action_end_time.timestamp()),
         "duration": actual_duration_seconds, # 實際花費時間
